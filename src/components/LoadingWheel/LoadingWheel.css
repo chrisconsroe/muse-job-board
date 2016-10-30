@@ -1,0 +1,16 @@
+.loader-container {
+    display: flex;
+    justify-content: center;
+    margin: 50px 0px;
+}
+
+.loader {
+    width: 200px;
+    height: 200px;
+    animation: loader-wheel-spin infinite 2s linear;
+}
+
+@keyframes loader-wheel-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

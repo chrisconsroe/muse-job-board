@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import JobList from './components/JobList/JobList';
 import FilterOptions from './components/FilterOptions/FilterOptions';
-import loaderImage from './loader.png';
+import LoadingWheel from './components/LoadingWheel/LoadingWheel';
 import './App.css';
 
 class App extends Component {
@@ -11,7 +11,7 @@ class App extends Component {
         this.state = {
             allResults: [],
             error: '',
-            isFetching: true
+            isLoading: true
             //will uncomment when introducing filter functionality
             // filtered_results: []
         }
@@ -31,11 +31,11 @@ class App extends Component {
               return response.json();
           })
 
-          //next promise chain; take data response and call set state to store full response in local state
+          //next promise chain; take data response and call set state to store full response in local state then set  to false
           .then(data => {
             this.setState({
               allResults: data.results,
-              isFetching: false
+              isLoading: false
             });
           })
 
@@ -50,18 +50,14 @@ class App extends Component {
           })
       }
 
-      //check state to see if list of unfiltered jobs API call has resolves, if so render JobList; if error comes back from server display it; else show a loader in the meantime
+      //check state to see if isLoading is true, if so load the spinning wheel
+      //else if API call has resolved/allResults has a length render JobList
+      //else if error comes back from server display it
     renderJobsIfNeeded() {
-        if (this.state.isFetching) {
+        if (this.state.isLoading) {
             return (
-                <div className="loader-container">
-                    <img
-                        src="{loaderImage}"
-                        alt="loading..."
-                        className="loader"
-                    />
-                </div>
-            )
+                <LoadingWheel />
+            );
         } else if (this.state.allResults.length > 0) {
             return (
                 <JobList
@@ -81,7 +77,6 @@ class App extends Component {
 
     //call renderJobsIfNeeded to start initial fetch to api for all, unfiltered jobs, also render filter option component
     render() {
-        console.log(loaderImage);
         return (
             <div className="app">
                 <FilterOptions />
