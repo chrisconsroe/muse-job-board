@@ -7,13 +7,23 @@ class JobList extends Component {
         allResults: React.PropTypes.array.isRequired
     }
 
+    // helper function to loop through array of objects to join their name properties into a comma separated list for categories, locations, and levels. it's kind of long.
     joinToString(resultsArrayForLoop) {
+        // establish temporaryValue to be reurned
         let temporaryValue = '';
+        // check if array to be joined returns true and has a length
         if (resultsArrayForLoop && resultsArrayForLoop.length) {
+            // loop though the array, if the array has multiple objects AND loop counter is NOT on the last item, grab the object.name and add a comma
+            //otherwise it's the last item so just get the name but no comma
             for (let i = 0; i < resultsArrayForLoop.length; i++) {
-                temporaryValue = resultsArrayForLoop[i].join(', ');
+                if (resultsArrayForLoop.length > 1 && i < resultsArrayForLoop.length - 1) {
+                    temporaryValue += resultsArrayForLoop[i].name + ', ';
+                } else {
+                    temporaryValue += resultsArrayForLoop[i].name
+                }
             }
         }
+        return temporaryValue;
     }
 
     renderJobListItems() {
@@ -44,17 +54,3 @@ class JobList extends Component {
 }
 
 export default JobList;
-
-
-//     let jobCategories = '';
-//     if (results.categories && results.categories.length) {
-//         jobCategories += results.categories[0].name;
-//     }
-//     let jobLocations = '';
-//     if (results.locations && results.locations.length) {
-//         jobLocations += results.locations[0].name;
-//     }
-//     let jobLevels = '';
-//     if (results.levels && results.levels.length) {
-//         jobLevels += results.levels[0].name;
-//     }

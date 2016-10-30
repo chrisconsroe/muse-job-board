@@ -16,6 +16,8 @@
     width: 100%;
     height: 50px;
     margin: 0 15px;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .filter-option-button-container {
@@ -23,17 +25,23 @@
     justify-content: center;
 }
 
-.filter-submit-button {
-    font-size: 16px;
+.button {
+    font-size: 14px;
+    font-weight: 300;
     background-color: #53b6d0;
     text-align: center;
     cursor: pointer;
     color: #FFFFFF;
     border: 1px solid #53b6d0;
-    padding: 20px 25px;
+    padding: 20px 50px;
+    margin: 0 10px;
 }
 
-.filter-submit-button:hover {
+.button:hover {
     background-color: #34a0bc;
     border: 1px solid #34a0bc;
+}
+
+.button:focus {
+    outline: none;
 }

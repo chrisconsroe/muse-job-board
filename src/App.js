@@ -12,47 +12,78 @@ class App extends Component {
             allResults: [],
             error: '',
             isLoading: true
-            //will uncomment when introducing filter functionality
-            // filtered_results: []
         }
     }
 
-    // Lifecycle hook to fetch data on page load (show loader while waiting).
+    // Lifecycle hook to fetch data on page load; just page 1 to start with
     componentWillMount() {
-        //hit the jobs endpoint (just the first page for right now) with no filters
-        fetch('https://api-v2.themuse.com/jobs?page=1')
+        this.fetchData('https://api-v2.themuse.com/jobs?page=1');
+    }
+
+    //function to make api calls with specific filters; receives filters from FilterOptions component, constructs new endpoint and calls fetch function. Note: context is bound by ES6 arrow function
+    getDataWithFilter = (company, category, level, location) => {
+        let endpoint = 'https://api-v2.themuse.com/jobs?';
+        let page = '&page=' + 1;
+
+        //big drawn out logic to construct filtered API call; probably a much cleaner way to do this that I can't think of. IMPROVEMENT_NEEDED
+        if (company) {
+            endpoint += '&company=' + company;
+        }
+        if (category) {
+            endpoint += '&category=' + category;
+        }
+        if (level) {
+            endpoint += '&level=' + level;
+        }
+        if (location) {
+            endpoint += '&location=' + location;
+        }
+
+        //finally add page number; no current way to request additional pages; IMPROVEMENT_NEEDED
+        endpoint += page
+
+        this.fetchData(endpoint);
+    }
+
+    //main functionality for making API calls to muse jobs; takes endpoint as parameter so it can be called on pageload (componentwillmount) or by filtered call with additional parameters
+    fetchData(endpointToCall) {
+        //first set loading to true to show loader wheel in the meantime for the users
+        this.setState({
+            isLoading: true
+        });
+        fetch(endpointToCall)
         //chain promises; then check the response object's status is a number greater than 400 throw an error
-          .then(response => {
-              if (response.status >= 400) {
-                  //throw forces case into catch
-                  throw `Response Error: ${response.status}`
-              }
-              //then resolve the promise into JSON as next argument
-              return response.json();
-          })
+            .then(response => {
+                if (response.status >= 400) {
+                    //throw forces case into catch
+                    throw `Response Error: ${response.status}`
+                }
+                //then resolve the promise into JSON as next argument
+                return response.json();
+            })
 
-          //next promise chain; take data response and call set state to store full response in local state then set  to false
-          .then(data => {
-            this.setState({
-              allResults: data.results,
-              isLoading: false
-            });
-          })
+            //next promise chain; take data response and call set state to store full response in local state then set  to false
+            .then(data => {
+                this.setState({
+                    allResults: data.results,
+                    isLoading: false
+                });
+            })
 
-          //catch statement to handle errors
-          .catch(error => {
-              if (typeof error !== 'string') {
-                  error = 'Fetch failed!';
-              }
-              this.setState({
-                error: error
-            });
-          })
-      }
+            //catch statement to handle errors
+            .catch(error => {
+                if (typeof error !== 'string') {
+                    error = 'Fetch failed!';
+                }
+                this.setState({
+                    error: error
+                });
+            })
+    }
 
-      //check state to see if isLoading is true, if so load the spinning wheel
-      //else if API call has resolved/allResults has a length render JobList
-      //else if error comes back from server display it
+    //check state to see if isLoading is true, if so load the spinning wheel
+    //else if API call has resolved/allResults has a length render JobList
+    //else if error comes back from server display it
     renderJobsIfNeeded() {
         if (this.state.isLoading) {
             return (
@@ -63,6 +94,13 @@ class App extends Component {
                 <JobList
                     allResults={this.state.allResults}
                 />
+            );
+        } else if (this.state.allResults.length === 0) {
+            //first check to see if results array is empty, if so show a message to user
+            return (
+                <div className="no-results">
+                    Bummer, no looks like no jobs that fit that description.
+                </div>
             );
         } else {
             //show error message
@@ -79,7 +117,9 @@ class App extends Component {
     render() {
         return (
             <div className="app">
-                <FilterOptions />
+                <FilterOptions
+                    getDataWithFilter={this.getDataWithFilter}
+                />
                 {this.renderJobsIfNeeded()}
             </div>
         )

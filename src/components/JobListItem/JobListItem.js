@@ -16,11 +16,15 @@ class JobListItem extends Component {
         return (
             <a href={this.props.landingPageUrl} target="_blank">
                 <div className="job-list-item">
-                    <p className="job-list-item-company-name">{this.props.company}</p>
-                    <p className="job-list-item-job-title">{this.props.jobTitle}</p>
-                    <p className="job-list-item-job-category">{this.props.jobCategory}</p>
-                    <p className="job-list-item-job-location">{this.props.locations}</p>
-                    <p className="job-list-item-job-level">{this.props.level}</p>
+                    <div className="company-job-container">
+                        <p className="job-list-item-company-name">{this.props.company || 'blank'}</p>
+                        <p className="job-list-item-job-title">{this.props.jobTitle || 'blank'}</p>
+                    </div>
+                    <div className="category-location-level-container">
+                        <p className="job-list-item-job-category">{this.props.jobCategory || 'Category Unavailable'}</p>
+                        <p className="job-list-item-job-location">{this.props.locations || 'Location Unavailable'}</p>
+                        <p className="job-list-item-job-level">{this.props.level || 'Level Unavailable'}</p>
+                    </div>
                 </div>
             </a>
         );
